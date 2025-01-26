@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rememberedCountDisplay.textContent = rememberedList.length;
     }
 
-    // Get the next Kanji to display
+       // Get the next Kanji to display
     function getNextKanji() {
         if (noIdeaList.length > 0) {
             return noIdeaList[0]; // Show the first kanji in the noIdeaList
@@ -162,25 +162,51 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (rememberedList.length > 0) {
             return rememberedList[0]; // Show the first kanji in the rememberedList
         } else {
+            if (noIdeaList.length === 0 && seenButNoIdeaList.length === 0) {
+                alert("Nothing to review. Please change your learning Kanji set.");
+            }
             return null; // No more kanji to review
         }
     }
 
-    // Display the next Kanji
-    function displayKanji() {
-
-        currentKanji = getNextKanji(); // Update currentKanji to the next kanji
-    if (currentKanji) {
-            kanjiDisplay.textContent = currentKanji.kanji; // Display the kanji
-            hideReadingAndMeaning(); // Hide reading, meaning, and examples for the new kanji
+    
+   // Display the next Kanji
+   function displayKanji() {
+    
+    // Check if noIdeaList and seenButNoIdeaList are empty
+    if (noIdeaList.length === 0 && seenButNoIdeaList.length === 0) {
+        // Check if rememberedList is not empty
+        if (rememberedList.length > 0) {
+            // Display all Kanji from the rememberedList
+            alert("Hurrah! All Kanji have been learnt! Click on next Part or Previous Part for further learning!");
+            // Extract kanji characters and display them
+            const learntKanji = rememberedList.map(item => item.kanji).join(", ");
+            kanjiDisplay.textContent = "Learnt Kanji: " + learntKanji;
+            readingDisplay.textContent = "";
+            meaningDisplay.textContent = "";
+            return; // No further processing is needed as all Kanji are learnt
         } else {
-            // No more kanji to review
-            kanjiDisplay.textContent = 'Nothing to review!';
-            readingDisplay.textContent = '';
-            meaningDisplay.textContent = '';
-            exampleDisplay.textContent = ''; // Clear examples when no kanji is available
+            // If rememberedList is empty
+            kanjiDisplay.textContent = "No Kanji have been remembered yet.";
+            readingDisplay.textContent = "";
+            meaningDisplay.textContent = "";
+            return;
         }
     }
+
+    // If there are still Kanji to review, get the next one
+    currentKanji = getNextKanji();
+    if (currentKanji) {
+        kanjiDisplay.textContent = currentKanji.kanji; // Display the Kanji
+        hideReadingAndMeaning(); // Hide reading and meaning for the new Kanji
+    } else {
+        // If no more Kanji to review, show a message
+        kanjiDisplay.textContent = "Nothing to review!";
+        readingDisplay.textContent = "";
+        meaningDisplay.textContent = "";
+        hideReadingAndMeaning();
+    }
+}
 
     // Save data to local storage
     function saveData() {
